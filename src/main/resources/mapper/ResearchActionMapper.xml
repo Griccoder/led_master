@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.car.led.mapper.ResearchActionMapper">
+  <resultMap id="BaseResultMap" type="com.car.led.model.ResearchAction">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="type" jdbcType="VARCHAR" property="type" />
+    <result column="vin" jdbcType="VARCHAR" property="vin" />
+    <result column="plant" jdbcType="VARCHAR" property="plant" />
+    <result column="device_id" jdbcType="VARCHAR" property="deviceId" />
+    <result column="vehicle_code" jdbcType="VARCHAR" property="vehicleCode" />
+    <result column="sub_module" jdbcType="VARCHAR" property="subModule" />
+    <result column="subModuleVal" jdbcType="VARCHAR" property="subModuleVal" />
+    <result column="action" jdbcType="VARCHAR" property="action" />
+    <result column="actionVal" jdbcType="VARCHAR" property="actionVal" />
+    <result column="result" jdbcType="BIT" property="result" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+  </resultMap>
+  
+  <select id="replaceInto" >
+  	REPLACE INTO `research_action` (`type`, `vin`, `plant`, `device_id`, `vehicle_code`, `sub_module`, `action`, `result`, `create_time`)
+  	VALUES (#{type}, #{vin}, #{plant}, #{deviceId}, #{vehicleCode}, #{subModule}, #{action}, #{result},#{createTime});
+  </select>
+  
+  <select id="selectStatistics" resultType="map">
+  SELECT count(1) AS done, IFNULL(sum(IF(result = 0, 1, 0)), 0) AS failed
+	FROM research_action
+	WHERE device_id = #{deviceId}
+	AND vehicle_code = #{vehicleCode};
+  </select>
+  
+  <select id="query" resultMap="BaseResultMap">
+		SELECT c.type, c.vin, c.plant,
+		c.vehicle_code, c.action, dict.val as
+		actionVal,
+		c.sub_module,dict1.val
+		as subModuleVal,c.result, c.create_time, c.device_id
+		FROM research_action c
+		INNER JOIN dictionary dict ON c.action = dict.`code` AND dict.type = 'action'
+		LEFT JOIN dictionary dict1 ON c.sub_module = dict1.`code` AND
+		dict1.type = 'sub_module'
+		WHERE c.vehicle_code = #{vehicleCode}  and c.device_id = #{deviceId} 
+		and c.result =#{result}
+		ORDER BY c.create_time desc
+	</select>
+	
+	<select id="selectAcross" resultMap="BaseResultMap">
+		SELECT sum(1) as done, sum(if(result=0,1,0)) as failed, type from research_action where device_id= 'boxcar' and vehicle_code = 'DNL-5' GROUP BY type
+	</select>
+  
+</mapper>

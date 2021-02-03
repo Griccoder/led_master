@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.car.led.mapper.ProductionPlanMapper">
+	<resultMap id="BaseResultMap" type="com.car.led.model.ProductionPlan">
+		<!-- WARNING - @mbg.generated -->
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="vehicle" jdbcType="VARCHAR" property="vehicle" />
+		<result column="stage" jdbcType="VARCHAR" property="stage" />
+		<result column="num" jdbcType="INTEGER" property="num" />
+		<result column="start_date" jdbcType="DATE" property="startDate" />
+		<result column="end_date" jdbcType="DATE" property="endDate" />
+		<result column="responsible" jdbcType="VARCHAR" property="responsible" />
+		<result column="finsh" jdbcType="VARCHAR" property="finsh" />
+	</resultMap>
+
+	<select id="selectPlan" resultMap="BaseResultMap" parameterType="String">
+		SELECT pp.vehicle, pp.stage, pp.num, count(DISTINCT a.vin) as
+		finsh,pp.responsible,pp.id,pp.end_date,pp.start_date
+		from
+		production_plan pp
+		inner join production_plan_has_vin ppv
+		left join
+		action a on a.vin = ppv.vin and a.type = 'fhc'
+		where ppv.plan_id =
+		pp.id and pp.done=0 group by pp.id;
+	</select>
+
+	<select id="selectVehicleQuality" resultType="com.car.led.controller.vo.VehicleQuality">
+		SELECT pp.vehicle,
+		pp.stage, sum(result) / COUNT(*) as successRate,
+		pp.id
+		FROM action a
+		INNER JOIN production_plan pp
+		INNER JOIN production_plan_has_vin ppv ON
+		ppv.plan_id = pp.id and pp.done=0
+		WHERE a.vin = ppv.vin and a.type !=
+		'fhc' GROUP BY pp.id;
+	</select>
+
+	<select id="selectStationQuality" resultType="com.car.led.controller.vo.StationQuality">
+		SELECT sum(result) / COUNT(*) as successRate, a.type as station
+		FROM
+		action a
+		INNER JOIN production_plan pp
+		INNER JOIN
+		production_plan_has_vin ppv ON ppv.plan_id = pp.id
+		<if test="ppid != null and ppid.length()>0">
+			and pp.id = #{ppid}
+		</if>
+		WHERE a.vin = ppv.vin and a.type != 'fhc' and pp.done=0
+		GROUP BY
+		a.type;
+	</select>
+
+
+</mapper>

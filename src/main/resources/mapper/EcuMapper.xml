@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.car.led.mapper.EcuMapper">
+  <resultMap id="BaseResultMap" type="com.car.led.model.Ecu">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="vehicle" jdbcType="VARCHAR" property="vehicle" />
+    <result column="ecu_code" jdbcType="VARCHAR" property="ecuCode" />
+    <result column="parent_code" jdbcType="VARCHAR" property="parentCode" />
+    <result column="test_num" jdbcType="INTEGER" property="testNum" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+    <result column="level" jdbcType="INTEGER" property="level" />
+  </resultMap>
+	
+	<select id="selectTotalTestNum" resultType="INTEGER">
+	SELECT
+		sum(test_num) AS totalTestNum
+	FROM
+		ecu
+	WHERE
+		vehicle = #{vehicle}
+	</select>
+	
+	<select id="updateStatus" resultType="int">
+		update ecu SET `status` = #{status} where vehicle = #{vehicle} and ecu_code = #{ecuCode} 
+		<if test="status == 1">
+			and `status`=0
+		</if>
+	</select>
+	
+</mapper>

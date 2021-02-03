@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+        <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.car.led.mapper.ResearchRealMapper">
+<resultMap id="BaseResultMap" type="com.car.led.model.ResearchReal">
+  <!--
+    WARNING - @mbg.generated
+  -->
+  <id column="id" jdbcType="INTEGER" property="id" />
+  <result column="vehicle" jdbcType="VARCHAR" property="vehicle" />
+  <result column="vin" jdbcType="VARCHAR" property="vin" />
+  <result column="bf" jdbcType="INTEGER" property="bf" />
+  <result column="swdl" jdbcType="INTEGER" property="swdl" />
+  <result column="wheel" jdbcType="INTEGER" property="wheel" />
+  <result column="visp" jdbcType="INTEGER" property="visp" />
+  <result column="fas" jdbcType="INTEGER" property="fas" />
+  <result column="fhc" jdbcType="INTEGER" property="fhc" />
+</resultMap>
+</mapper>

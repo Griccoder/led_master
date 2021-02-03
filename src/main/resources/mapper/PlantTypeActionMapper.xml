@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.car.led.mapper.PlantTypeActionMapper">
+	<resultMap id="BaseResultMap" type="com.car.led.model.PlantTypeAction">
+		<!-- WARNING - @mbg.generated -->
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="plant" jdbcType="VARCHAR" property="plant" />
+		<result column="type" jdbcType="VARCHAR" property="type" />
+		<result column="vehicle_code" jdbcType="VARCHAR" property="vehicleCode" />
+		<result column="control_model" jdbcType="VARCHAR" property="controlModel" />
+		<result column="action" jdbcType="VARCHAR" property="action" />
+		<result column="actionVal" jdbcType="VARCHAR" property="actionVal" />
+		<result column="sub_module" jdbcType="VARCHAR" property="subModule" />
+		<result column="subModuleVal" jdbcType="VARCHAR" property="subModuleVal" />
+	</resultMap>
+
+
+	<select id="selectByPlant" resultMap="BaseResultMap"
+		parameterType="com.car.led.model.PlantTypeAction">
+		SELECT p.id, p.plant, p.type, p.vehicle_code, p.action, d.val AS
+		actionVal, p.sub_module, ds.val AS subModuleVal,
+		p.control_model
+		FROM
+		plant_type_action p
+		INNER JOIN dictionary d ON p.action = d.`code` AND
+		d.type = 'action'
+		LEFT JOIN dictionary ds ON p.sub_module = ds.`code`
+		AND ds.type =
+		'sub_module'
+		WHERE p.plant = #{plant} AND p.vehicle_code =
+		#{vehicleCode}
+		<if test="type != null and type !=''">
+			and p.type=#{type}
+		</if>
+		<if test="controlModel != null and controlModel !=''">
+			and p.control_model=#{controlModel}
+		</if>
+	</select>
+
+</mapper>

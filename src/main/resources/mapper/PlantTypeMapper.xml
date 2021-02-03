@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.car.led.mapper.PlantTypeMapper">
+	<resultMap id="BaseResultMap" type="com.car.led.model.PlantType">
+		<!-- WARNING - @mbg.generated -->
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="plant" jdbcType="VARCHAR" property="plant" />
+		<result column="type" jdbcType="VARCHAR" property="type" />
+		<result column="typeName" jdbcType="VARCHAR" property="typeName" />
+		<result column="order" jdbcType="TINYINT" property="order" />
+	</resultMap>
+
+
+	<select id="selectByPlant" resultMap="BaseResultMap">
+		SELECT p.plant, p.type,
+		d.val AS typeName, p.`order`
+		FROM plant_type p
+		INNER JOIN dictionary d
+		ON d.type = 'station' AND d.`code` = p.type
+		where p.plant = #{plant}
+	</select>
+
+</mapper>
